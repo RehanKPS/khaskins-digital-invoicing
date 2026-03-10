@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useData } from '@/contexts/DataContext';
 import { InvoiceItem, SubItem } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,7 +28,8 @@ const CreateInvoicePage = () => {
   const navigate = useNavigate();
   const { customers, products, categories, addInvoice, getNextInvoiceNo } = useData();
 
-  const invoiceNo = getNextInvoiceNo();
+  const [invoiceNo, setInvoiceNo] = useState('');
+  useEffect(() => { getNextInvoiceNo().then(no => setInvoiceNo(no)); }, []);
   const [customerId, setCustomerId] = useState('');
   const [invoiceDate, setInvoiceDate] = useState<Date>(new Date());
   const [items, setItems] = useState<InvoiceItem[]>([]);
