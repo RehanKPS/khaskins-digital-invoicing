@@ -74,19 +74,6 @@ export const getFbrApiUrl = (mode: 'Sandbox' | 'Production') => {
     : 'https://gw.fbr.gov.pk/di_data/v1/di/postinvoicedata_sb';
 };
 
-const mapProvince = (province: string): string => {
-  const map: Record<string, string> = {
-    'Punjab':      'Punjab',
-    'Sindh':       'Sindh',
-    'KPK':         'Khyber Pakhtunkhwa',
-    'Balochistan': 'Balochistan',
-    'ICT':         'Islamabad',
-    'AJK':         'Azad Jammu & Kashmir',
-    'GB':          'Gilgit Baltistan',
-  };
-  return map[province] || province || 'Sindh';
-};
-
 export const buildFbrPayload = (invoice: Invoice, settings: FbrSettings) => {
   const scenario = SCENARIO_MAPPINGS[invoice.scenarioId || 'SN001'];
   const rawBuyerNtn = invoice.customerNtn?.replace(/\D/g, '') || '';
