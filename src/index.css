@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --background: 200 60% 97%;
+    --foreground: 215 28% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+
+    --primary: 197 95% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 193 72% 59%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 193 72% 92%;
+    --accent-foreground: 197 95% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 197 95% 40%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 197 95% 40%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 193 72% 59%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: 215 28% 17%;
+    --sidebar-border: 197 80% 35%;
+    --sidebar-ring: 193 72% 59%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 25 95% 53%;
+    --warning-foreground: 0 0% 100%;
+    --info: 197 95% 40%;
+    --info-foreground: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .pkr-format {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Print styles */
+.print-show {
+  display: none !important;
+}
+
+.invoice-footer {
+  text-align: center;
+  font-size: 10px;
+  font-style: italic;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 6px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-show {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  aside, nav, header, footer,
+  [data-sidebar], .sidebar {
+    display: none !important;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .print-format {
+    display: none !important;
+  }
+
+  .print-format.active-print {
+    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    color: black !important;
+  }
+
+  .print-format * {
+    color: black !important;
+  }
+
+  .print-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
+
+  .print-table td,
+  .print-table th {
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .fbr-qr svg {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .invoice-footer {
+    position: fixed;
+    bottom: 15mm;
+    left: 15mm;
+    right: 15mm;
+  }
+}
