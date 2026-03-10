@@ -2,6 +2,9 @@ import { Invoice } from '@/types';
 import { formatAmount, formatDateDMY, numberToWords } from '@/lib/format';
 import { QRCodeSVG } from 'qrcode.react';
 
+const KHASKINS_LOGO = 'https://invoicing.khaskins.net/logos/khaskins_logo.png';
+const FBR_LOGO = 'https://invoicing.khaskins.net/logos/fbr.png';
+
 const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
   const isAccepted = invoice.fbrStatus === 'Accepted' && !!invoice.fbrInvoiceNo;
   const qrValue = isAccepted ? invoice.fbrInvoiceNo! : 'PENDING';
@@ -12,31 +15,27 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
       fontSize: '12px',
       color: '#000',
       lineHeight: 1.4,
-      padding: '18px 22px',
+      padding: '8px 20px 8px 20px',
       boxSizing: 'border-box',
       width: '100%',
+      minHeight: '277mm',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
 
       {/* ── HEADER ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         {/* Left: Company Info */}
         <div>
           <p style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>KHASKINS (PVT) LTD.</p>
           <p style={{ margin: '2px 0', fontSize: '11px' }}>Plot#179, Sector 7-A, Korangi Industrial Area Karachi - 74900</p>
           <p style={{ margin: '2px 0', fontSize: '11px' }}>S. Tax Reg No. 12-01-4203-283-46 &nbsp;|&nbsp; NTN No. 0709343-8</p>
         </div>
-
-        {/* Right: Khaskins Logo placeholder */}
-        <div style={{ width: '100px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <img
-            src="/logos/khaskins_logo.png"
-            alt="Khaskins Logo"
-            style={{ maxWidth: '100px', maxHeight: '60px', objectFit: 'contain' }}
-            onError={(e: any) => {
-              e.target.style.display = 'none';
-            }}
-          />
+        {/* Right: Khaskins Logo — bigger */}
+        <div style={{ width: '140px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <img src={KHASKINS_LOGO} alt="Khaskins"
+            style={{ maxWidth: '140px', maxHeight: '80px', objectFit: 'contain' }}
+            onError={(e: any) => { e.target.style.display = 'none'; }} />
         </div>
       </div>
 
@@ -47,54 +46,39 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
         </h2>
       </div>
 
-      {/* ── CUSTOMER + FBR QR SECTION ── */}
+      {/* ── CUSTOMER + FBR/QR SECTION ── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
 
-        {/* Left: Invoice To */}
-        <div style={{ flex: 1 }}>
+        {/* Left: Invoice To — hard max width so long address wraps */}
+        <div style={{ maxWidth: '48%', paddingRight: '10px' }}>
           <p style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#666', margin: '0 0 3px 0' }}>Invoice To:</p>
           <p style={{ fontWeight: 'bold', margin: '2px 0', fontSize: '12px' }}>{invoice.customerName}</p>
-          <p style={{ margin: '2px 0', fontSize: '11px' }}>{invoice.customerAddress}</p>
+          <p style={{ margin: '2px 0', fontSize: '11px', wordBreak: 'break-word', whiteSpace: 'pre-wrap', maxWidth: '100%' }}>{invoice.customerAddress}</p>
           <p style={{ margin: '2px 0', fontSize: '11px' }}>NTN: {invoice.customerNtn} &nbsp;|&nbsp; STRN: {invoice.customerStrn}</p>
         </div>
 
-        {/* Right: FBR Logo + QR (same size, side by side) then invoice details below */}
-        <div style={{ textAlign: 'right', minWidth: '220px' }}>
-
-          {/* FBR logo + QR code — same size, side by side */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <img
-              src="/logos/fbr.png"
-              alt="FBR Digital Invoicing"
-              width={60}
-              height={60}
-              style={{ objectFit: 'contain', border: '1px solid #ddd' }}
-              onError={(e: any) => {
-                // Show FBR text box on error
-                e.target.replaceWith(Object.assign(document.createElement('div'), {
-                  style: 'width:60px;height:60px;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:bold;text-align:center;',
-                  innerText: 'FBR\nDIGITAL\nINVOICING'
-                }));
-              }}
-            />
-            <div style={{ width: '60px', height: '60px', border: isAccepted ? 'none' : '1px dashed #999', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <QRCodeSVG value={qrValue} size={60} />
-            </div>
+        {/* Right: FBR Logo + QR + Invoice Details */}
+        <div style={{ textAlign: 'right' }}>
+          {/* FBR logo + QR — no borders, exact same size */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+            <img src={FBR_LOGO} alt="FBR"
+              style={{ width: '70px', height: '70px', objectFit: 'contain' }}
+              onError={(e: any) => { e.target.style.display = 'none'; }} />
+            <QRCodeSVG value={qrValue} size={70} />
           </div>
-
           {/* Invoice Details */}
           <table style={{ marginLeft: 'auto', fontSize: '11px', borderCollapse: 'collapse' }}>
             <tbody>
               <tr>
-                <td style={{ paddingRight: '6px', color: '#555' }}>Invoice No:</td>
+                <td style={{ paddingRight: '6px', color: '#555', textAlign: 'right' }}>Invoice No:</td>
                 <td style={{ fontWeight: 'bold' }}>{invoice.invoiceNo}</td>
               </tr>
               <tr>
-                <td style={{ paddingRight: '6px', color: '#555' }}>FBR Invoice No:</td>
+                <td style={{ paddingRight: '6px', color: '#555', textAlign: 'right' }}>FBR Invoice No:</td>
                 <td style={{ fontWeight: 'bold' }}>{isAccepted ? invoice.fbrInvoiceNo : 'Pending'}</td>
               </tr>
               <tr>
-                <td style={{ paddingRight: '6px', color: '#555' }}>Invoice Date:</td>
+                <td style={{ paddingRight: '6px', color: '#555', textAlign: 'right' }}>Invoice Date:</td>
                 <td style={{ fontWeight: 'bold' }}>{formatDateDMY(invoice.invoiceDate)}</td>
               </tr>
             </tbody>
@@ -106,14 +90,15 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '6px' }}>
         <thead>
           <tr style={{ borderTop: '2px solid #000', borderBottom: '2px solid #000', background: '#f8f8f8' }}>
-            <th style={{ textAlign: 'center', padding: '5px 3px', fontSize: '11px', width: '28px' }}>Sr</th>
+            <th style={{ textAlign: 'center', padding: '5px 3px', fontSize: '11px', width: '26px' }}>Sr</th>
             <th style={{ textAlign: 'left', padding: '5px 3px', fontSize: '11px' }}>Description</th>
-            <th style={{ textAlign: 'left', padding: '5px 3px', fontSize: '11px', width: '80px' }}>Article</th>
-            <th style={{ textAlign: 'left', padding: '5px 3px', fontSize: '11px', width: '70px' }}>Color</th>
-            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '45px' }}>Qty</th>
-            <th style={{ textAlign: 'center', padding: '5px 3px', fontSize: '11px', width: '50px' }}>UoM</th>
-            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '70px' }}>Rate</th>
-            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '80px' }}>Amount</th>
+            <th style={{ textAlign: 'left', padding: '5px 3px', fontSize: '11px', width: '75px' }}>Article</th>
+            <th style={{ textAlign: 'left', padding: '5px 3px', fontSize: '11px', width: '65px' }}>Color</th>
+            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '40px' }}>Pcs</th>
+            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '40px' }}>Qty</th>
+            <th style={{ textAlign: 'center', padding: '5px 3px', fontSize: '11px', width: '48px' }}>UoM</th>
+            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '65px' }}>Rate</th>
+            <th style={{ textAlign: 'right', padding: '5px 3px', fontSize: '11px', width: '75px' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -125,23 +110,24 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
                 <td style={{ padding: '4px 3px', fontSize: '11px', fontWeight: 600, verticalAlign: 'top' }}>{item.productName}</td>
                 <td style={{ padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}></td>
                 <td style={{ padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}></td>
+                <td style={{ textAlign: 'right', padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}></td>
                 <td style={{ textAlign: 'right', padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}>{item.subItems?.length ? '' : item.quantity}</td>
                 <td style={{ textAlign: 'center', padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}>{item.uom}</td>
                 <td style={{ textAlign: 'right', padding: '4px 3px', fontSize: '11px', verticalAlign: 'top' }}>{item.subItems?.length ? '' : formatAmount(item.rate)}</td>
                 <td style={{ textAlign: 'right', padding: '4px 3px', fontSize: '11px', fontWeight: 600, verticalAlign: 'top' }}>{formatAmount(item.amount)}</td>
               </tr>
-
               {/* Sub-item Rows */}
               {item.subItems?.map((sub, sIdx) => (
                 <tr key={sub.id} style={{ borderBottom: sIdx === (item.subItems!.length - 1) ? '1px solid #ddd' : '1px solid #eee' }}>
-                  <td style={{ textAlign: 'center', padding: '3px 3px', fontSize: '10px', color: '#888' }}>↳</td>
-                  <td style={{ padding: '3px 3px 3px 16px', fontSize: '10px', color: '#444' }}></td>
-                  <td style={{ padding: '3px 3px', fontSize: '10px', color: '#333' }}>{sub.article}</td>
-                  <td style={{ padding: '3px 3px', fontSize: '10px', color: '#333' }}>{sub.color}</td>
-                  <td style={{ textAlign: 'right', padding: '3px 3px', fontSize: '10px', color: '#333' }}>{sub.quantity}</td>
+                  <td style={{ textAlign: 'center', padding: '3px', fontSize: '10px', color: '#888' }}>↳</td>
+                  <td style={{ padding: '3px', fontSize: '10px' }}></td>
+                  <td style={{ padding: '3px', fontSize: '10px', color: '#333' }}>{sub.article}</td>
+                  <td style={{ padding: '3px', fontSize: '10px', color: '#333' }}>{sub.color}</td>
+                  <td style={{ textAlign: 'right', padding: '3px', fontSize: '10px', color: '#333' }}>{(sub as any).pcs || ''}</td>
+                  <td style={{ textAlign: 'right', padding: '3px', fontSize: '10px', color: '#333' }}>{sub.quantity}</td>
                   <td></td>
-                  <td style={{ textAlign: 'right', padding: '3px 3px', fontSize: '10px', color: '#333' }}>{formatAmount(sub.rate)}</td>
-                  <td style={{ textAlign: 'right', padding: '3px 3px', fontSize: '10px', color: '#333' }}>{formatAmount(sub.amount)}</td>
+                  <td style={{ textAlign: 'right', padding: '3px', fontSize: '10px', color: '#333' }}>{formatAmount(sub.rate)}</td>
+                  <td style={{ textAlign: 'right', padding: '3px', fontSize: '10px', color: '#333' }}>{formatAmount(sub.amount)}</td>
                 </tr>
               ))}
             </>
@@ -149,7 +135,7 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
         </tbody>
       </table>
 
-      {/* ── HS CODES BELOW TABLE (LEFT) ── */}
+      {/* ── HS CODES BELOW TABLE ── */}
       {invoice.items.some(i => i.hsCode) && (
         <div style={{ fontSize: '10px', color: '#555', marginBottom: '10px' }}>
           <strong>HS Code(s):</strong>{' '}
@@ -180,12 +166,25 @@ const PrintInvoice = ({ invoice }: { invoice: Invoice }) => {
       </div>
 
       {/* ── AMOUNT IN WORDS ── */}
-      <div style={{ background: '#f3f4f6', padding: '5px 10px', marginBottom: '20px', fontSize: '11px', textTransform: 'uppercase', fontStyle: 'italic', borderLeft: '3px solid #000' }}>
-        {numberToWords(invoice.grandTotal)}
+      <div style={{ marginBottom: '12px' }}>
+        <span style={{
+          display: 'inline-block',
+          background: '#f3f4f6',
+          padding: '5px 10px',
+          fontSize: '11px',
+          textTransform: 'uppercase',
+          fontStyle: 'italic',
+          borderLeft: '3px solid #000',
+        }}>
+          {numberToWords(invoice.grandTotal)}
+        </span>
       </div>
 
-      {/* ── SIGNATURES — STUCK TO BOTTOM ── */}
-      <div style={{ marginTop: 'auto', paddingTop: '40px', borderTop: '1px solid #ccc' }}>
+      {/* ── SPACER — pushes signatures to bottom ── */}
+      <div style={{ flex: 1 }} />
+
+      {/* ── SIGNATURES — FIXED AT BOTTOM ── */}
+      <div style={{ borderTop: '1px solid #ccc', paddingTop: '6px', marginTop: '10px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {['Prepared By', 'Approved By', 'Received By'].map(label => (
             <div key={label} style={{ textAlign: 'center', width: '30%' }}>
